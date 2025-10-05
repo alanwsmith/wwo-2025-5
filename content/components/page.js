@@ -1,14 +1,14 @@
 const names = {
   bass: { name: "Bass" },
-  bv: { name: "B.V." },
-  gracie: { name: "Gracie" },
-  guitar: { name: "Guitar" },
-  keys: { name: "Keys" },
-  piano: { name: "Piano" },
-  plucks: { name: "Plucks" },
-  pads: { name: "Pads" },
-  solo: { name: "Solo" },
-  swells: { name: "Swells" },
+  //   bv: { name: "B.V." },
+  //   gracie: { name: "Gracie" },
+  //   guitar: { name: "Guitar" },
+  //   keys: { name: "Keys" },
+  //   piano: { name: "Piano" },
+  //   plucks: { name: "Plucks" },
+  //   pads: { name: "Pads" },
+  //   solo: { name: "Solo" },
+  //   swells: { name: "Swells" },
 };
 
 const templates = {
@@ -26,12 +26,31 @@ class Player {
     this.audioContext = new AudioContext();
     this.stems = {};
   }
-}
 
-class Stem {
-  constructor() {
+  addStem(key, track) {
+    console.log(`Adding stem: ${key}`);
+    const payload = {
+      track: track,
+    };
+    payload.source = new AudioBufferSourceNode(this.audioContext, {
+      buffer: payload.track,
+    });
+    payload.gainNode = this.audioContext.createGain();
+    payload.source.connect(payload.gainNode).connect(
+      this.audioContext.destination,
+    );
+    this.stems[key] = payload;
   }
 }
+
+// class Stem {
+//   constructor(track) {
+//     this.track = track;
+//       this.source = new AudioBufferSourceNode(this.audioContext, {
+//         buffer: stem.track,
+//       })
+//   }
+// }
 
 function loadTemplate(name, findReplace) {
   const template = document.createElement("template");
@@ -50,6 +69,7 @@ export default class {
       "visible",
     );
   }
+
   faders(_event, el) {
     for (let [key, details] of Object.entries(names)) {
       const findReplace = {
@@ -64,7 +84,7 @@ export default class {
     this.player = new Player();
     for (let key of Object.keys(names)) {
       let track = await this.getTrack(key);
-      console.log(key);
+      this.player.addStem(key, track);
     }
   }
 
@@ -76,15 +96,9 @@ export default class {
     } else {
       const arrayBuffer = await response.arrayBuffer();
       const track = await this.player.audioContext.decodeAudioData(arrayBuffer);
-      // return track;
+      return track;
     }
   }
-
-  // const data = await fetch(stem.url)
-  // const arrayBuffer = await data.arrayBuffer()
-  // stem.source = new AudioBufferSourceNode(this.audioContext, {
-  //   buffer: stem.track,
-  // })
 
   waveforms(_event, el) {
     for (let [key, details] of Object.entries(names)) {
