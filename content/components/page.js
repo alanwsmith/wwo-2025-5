@@ -18,11 +18,14 @@ const templates = {
         data-param="key" data-send="fade" value="100" />
       </label>
     </div>`,
-  waveform: `
-    <div>name</div>
-    <canvas id="key" />
-  `,
+  waveform: `<div>name</div><canvas id="key" />`,
 };
+
+class Player {
+  init() {
+    this.audioContext = new AudioContext();
+  }
+}
 
 function loadTemplate(name, findReplace) {
   const template = document.createElement("template");
@@ -34,7 +37,7 @@ function loadTemplate(name, findReplace) {
   return template.content.cloneNode(true);
 }
 
-window.BittyClass = class {
+export default class {
   faders(_event, el) {
     for (let [key, details] of Object.entries(names)) {
       const findReplace = {
@@ -54,4 +57,4 @@ window.BittyClass = class {
       el.appendChild(loadTemplate("waveform", findReplace));
     }
   }
-};
+}

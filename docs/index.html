@@ -1426,10 +1426,7 @@ const templates = {
         data-param="key" data-send="fade" value="100" />
       </label>
     </div>`,
-  waveform: `
-    <div>name</div>
-    <canvas id="key" />
-  `,
+  waveform: `<div>name</div><canvas id="key" />`,
 };
 
 function loadTemplate(name, findReplace) {
@@ -1489,10 +1486,12 @@ window.BittyClass = class {
         </div>
       </header>
       <main class="default-wrapper">
-<bitty-1-1 data-send="waveforms|faders">
+<bitty-1-1 data-connect="/components/page.js" data-send="waveforms|faders">
   <div data-receive="waveforms"></div>
   <div data-receive="faders"></div>
-</bitty-1-1>      </main>
+  <div data-receive="player"></div>
+</bitty-1-1>
+      </main>
 
       <footer class="default-wrapper">
         <div class="small-font">
