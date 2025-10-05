@@ -1,14 +1,14 @@
 const names = {
-  bass: { name: "Bass" },
+  // bass: { name: "Bass" },
   bv: { name: "B.V." },
-  //   gracie: { name: "Gracie" },
-  //   guitar: { name: "Guitar" },
-  //   keys: { name: "Keys" },
-  //   piano: { name: "Piano" },
-  //   plucks: { name: "Plucks" },
-  //   pads: { name: "Pads" },
+  gracie: { name: "Gracie" },
+  guitar: { name: "Guitar" },
+  // keys: { name: "Keys" },
+  //  piano: { name: "Piano" },
+  plucks: { name: "Plucks" },
+  // pads: { name: "Pads" },
   //   solo: { name: "Solo" },
-  //   swells: { name: "Swells" },
+  // swells: { name: "Swells" },
 };
 
 const templates = {
@@ -22,13 +22,6 @@ const templates = {
     `<div>name</div><canvas width="440" height="30" data-receive="visualize" data-key="dataKey"></canvas>`,
 };
 
-class Player {
-  constructor() {
-    this.audioContext = new AudioContext();
-    this.stems = {};
-  }
-}
-
 function loadTemplate(name, findReplace) {
   const template = document.createElement("template");
   let content = templates[name];
@@ -41,6 +34,7 @@ function loadTemplate(name, findReplace) {
 
 export default class {
   bittyInit() {
+    this.isPlaying = false;
     this.audioContext = new AudioContext();
     this.stems = {};
     document.documentElement.style.setProperty(
@@ -49,19 +43,33 @@ export default class {
     );
   }
 
-  async addStem(key, track) {
+  addStem(key, track) {
     console.log(`Adding stem: ${key}`);
-    const payload = {
-      track: track,
-    };
-    payload.source = await new AudioBufferSourceNode(this.audioContext, {
-      buffer: payload.track,
-    });
-    payload.gainNode = await this.audioContext.createGain();
-    await payload.source.connect(payload.gainNode).connect(
-      this.audioContext.destination,
-    );
-    this.stems[key] = payload;
+    this.stems[key] = {};
+    this.stems[key].track = track;
+  }
+
+  playStop(_event, el) {
+    if (this.isPlaying) {
+      el.innerHTML = "Play";
+      this.isPlaying = false;
+      for (let key of Object.keys(names)) {
+        this.stems[key].source.stop();
+      }
+    } else {
+      el.innerHTML = "Stop";
+      this.isPlaying = true;
+      for (let key of Object.keys(names)) {
+        this.stems[key].source = new AudioBufferSourceNode(this.audioContext, {
+          buffer: this.stems[key].track,
+        });
+        this.stems[key].gainNode = this.audioContext.createGain();
+        this.stems[key].source.connect(this.stems[key].gainNode).connect(
+          this.audioContext.destination,
+        );
+        this.stems[key].source.start();
+      }
+    }
   }
 
   faders(_event, el) {
