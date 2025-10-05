@@ -1395,77 +1395,10 @@ canvas {
   height: 30px;
 }    </style>
 
-    <script>window.bittyClasses = {
-  PageStuff: class {
-    bittyInit() {
-      document.documentElement.style.setProperty(
-        "--page-visibility",
-        "visible",
-      );
-    }
-  },
-};</script>
-
-    <script>const names = {
-  bass: { name: "Bass" },
-  bv: { name: "B.V." },
-  gracie: { name: "Gracie" },
-  guitar: { name: "Guitar" },
-  keys: { name: "Keys" },
-  piano: { name: "Piano" },
-  plucks: { name: "Plucks" },
-  pads: { name: "Pads" },
-  solo: { name: "Solo" },
-  swells: { name: "Swells" },
-};
-
-const templates = {
-  fader: `
-    <div><label>name 
-      <input type="range" min="0" max="100" 
-        data-param="key" data-send="fade" value="100" />
-      </label>
-    </div>`,
-  waveform: `<div>name</div><canvas id="key" />`,
-};
-
-function loadTemplate(name, findReplace) {
-  const template = document.createElement("template");
-  let content = templates[name];
-  for (let [k, v] of Object.entries(findReplace)) {
-    content = content.replaceAll(k, v);
-  }
-  template.innerHTML = content;
-  return template.content.cloneNode(true);
-}
-
-window.BittyClass = class {
-  faders(_event, el) {
-    for (let [key, details] of Object.entries(names)) {
-      const findReplace = {
-        key: key,
-        name: names[key].name,
-      };
-      el.appendChild(loadTemplate("fader", findReplace));
-    }
-  }
-
-  waveforms(_event, el) {
-    for (let [key, details] of Object.entries(names)) {
-      const findReplace = {
-        key: key,
-        name: names[key].name,
-      };
-      el.appendChild(loadTemplate("waveform", findReplace));
-    }
-  }
-};</script>
-
 
 
   </head>
   <body class="page">
-    <bitty-1-1 data-connect="PageStuff" class="content-wrapper">
       <noscript>
         This sites uses JavaScript which appears to be off.
         Some features will not work without it. 
@@ -1486,7 +1419,7 @@ window.BittyClass = class {
         </div>
       </header>
       <main class="default-wrapper">
-<bitty-1-1 data-connect="/components/page.js" data-send="waveforms|faders">
+<bitty-1-1 data-connect="/components/page.js" data-send="waveforms|faders|init">
   <div data-receive="waveforms"></div>
   <div data-receive="faders"></div>
   <div data-receive="player"></div>
@@ -1505,7 +1438,6 @@ window.BittyClass = class {
           <a href="https://www.alanwsmith.com/feeds/posts.xml">rss</a>
         </div>
       </footer>
-    </bitty-1-1>
 
     <script src="/components/bitty-1.1.0-rc1.min.js" type="module"></script>
     <script>

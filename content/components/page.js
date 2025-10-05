@@ -22,8 +22,14 @@ const templates = {
 };
 
 class Player {
-  init() {
+  constructor() {
     this.audioContext = new AudioContext();
+    this.stems = {};
+  }
+}
+
+class Stem {
+  constructor() {
   }
 }
 
@@ -38,6 +44,12 @@ function loadTemplate(name, findReplace) {
 }
 
 export default class {
+  bittyInit() {
+    document.documentElement.style.setProperty(
+      "--page-visibility",
+      "visible",
+    );
+  }
   faders(_event, el) {
     for (let [key, details] of Object.entries(names)) {
       const findReplace = {
@@ -47,6 +59,32 @@ export default class {
       el.appendChild(loadTemplate("fader", findReplace));
     }
   }
+
+  async init(_event, _el) {
+    this.player = new Player();
+    for (let key of Object.keys(names)) {
+      let track = await this.getTrack(key);
+      console.log(key);
+    }
+  }
+
+  async getTrack(key) {
+    const url = `/stems/${key}.mp3`;
+    let response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("There was a problem getting the track");
+    } else {
+      const arrayBuffer = await response.arrayBuffer();
+      const track = await this.player.audioContext.decodeAudioData(arrayBuffer);
+      // return track;
+    }
+  }
+
+  // const data = await fetch(stem.url)
+  // const arrayBuffer = await data.arrayBuffer()
+  // stem.source = new AudioBufferSourceNode(this.audioContext, {
+  //   buffer: stem.track,
+  // })
 
   waveforms(_event, el) {
     for (let [key, details] of Object.entries(names)) {
