@@ -1384,14 +1384,24 @@ video {
 </style><style>
 
 </style><style>
-[data-receive=waveforms] {
-  display: grid;
-  grid-template-columns: 1fr 5fr;
+canvas {
+  margin-bottom: var(--default-padding);
 }
 
-canvas {
-  outline: 1px solid blue;
-}    </style>
+.labelName {
+  display: inline-block;
+  width: 4rem;
+}
+
+
+.waveform-wrapper {
+  font-size: var(--small-font);
+  border-block: 1px solid var(--accent-faded);
+  margin-bottom: var(--xlarge-margin);
+  padding-top: var(--default-padding);
+  width: 440px;
+}
+    </style>
 
 
 

@@ -12,19 +12,13 @@ const names = {
 };
 
 const templates = {
-  // fader: `
-  //   <div><label>name
-  //     <input type="range" min="0" max="1"
-  //       data-key="dataKey" data-send="fade" value="1" step="0.01" />
-  //     </label>
-  //   </div>`,
-  waveform: `<div>name</div>
-      <div>
+  waveform: `
+      <div class="waveform-wrapper">
         <canvas width="440" height="30" data-receive="visualize" data-key="dataKey"></canvas>
-        <label>name 
-          <input type="range" min="0" max="1" 
+        <label><span class="labelName">name</span>
+        <input type="range" min="0" max="1" 
             data-key="dataKey" data-send="fade" value="1" step="0.01" />
-          </label>
+        </label>
       </div>`,
 };
 
@@ -84,16 +78,6 @@ export default class {
     this.stems[key].gainNode.gain.value = gain;
     console.log(event.target.value);
   }
-
-  // faders(_event, el) {
-  //   for (let [key, details] of Object.entries(names)) {
-  //     const findReplace = {
-  //       dataKey: key,
-  //       name: names[key].name,
-  //     };
-  //     el.appendChild(loadTemplate("fader", findReplace));
-  //   }
-  // }
 
   async init(_event, _el) {
     for (let key of Object.keys(names)) {
