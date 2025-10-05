@@ -10,7 +10,7 @@ canvas {
 
 .waveform-wrapper {
   font-size: var(--small-font);
-  border-block: 1px solid var(--accent-faded);
+  border-top: 1px solid var(--warning-faded);
   margin-bottom: var(--xlarge-margin);
   padding-top: var(--default-padding);
   width: 440px;

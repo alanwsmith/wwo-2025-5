@@ -1,14 +1,14 @@
 const names = {
-  // bass: { name: "Bass" },
+  bass: { name: "Bass" },
   bv: { name: "B.V." },
   gracie: { name: "Gracie" },
   guitar: { name: "Guitar" },
-  // keys: { name: "Keys" },
-  //  piano: { name: "Piano" },
+  keys: { name: "Keys" },
+  piano: { name: "Piano" },
   plucks: { name: "Plucks" },
-  // pads: { name: "Pads" },
-  //   solo: { name: "Solo" },
-  // swells: { name: "Swells" },
+  pads: { name: "Pads" },
+  solo: { name: "Solo" },
+  swells: { name: "Swells" },
 };
 
 const templates = {
@@ -87,6 +87,7 @@ export default class {
       console.log("h2");
       this.api.forward({ target: { dataset: { key: key } } }, "visualize");
     }
+    this.api.forward(event, "showButton");
   }
 
   async getTrack(key) {
@@ -99,6 +100,10 @@ export default class {
       const track = await this.audioContext.decodeAudioData(arrayBuffer);
       return track;
     }
+  }
+
+  showButton(_event, el) {
+    el.hidden = false;
   }
 
   visualize(event, el) {

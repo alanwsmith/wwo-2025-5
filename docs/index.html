@@ -1396,7 +1396,7 @@ canvas {
 
 .waveform-wrapper {
   font-size: var(--small-font);
-  border-block: 1px solid var(--accent-faded);
+  border-top: 1px solid var(--warning-faded);
   margin-bottom: var(--xlarge-margin);
   padding-top: var(--default-padding);
   width: 440px;
@@ -1431,7 +1431,7 @@ canvas {
   <div data-receive="waveforms"></div>
   <div data-receive="faders"></div>
   <div data-receive="player"></div>
-  <button data-send="playStop" data-receive="playStop">Play</button>
+  <button data-send="playStop" data-receive="showButton|playStop" hidden>Play</button>
 </bitty-1-1>
       </main>
 
