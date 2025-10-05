@@ -19,7 +19,7 @@ const templates = {
       </label>
     </div>`,
   waveform:
-    `<div>name</div><div data-receive="visualize" data-key="dataKey"></div>`,
+    `<div>name</div><canvas data-receive="visualize" data-key="dataKey"></canvas>`,
 };
 
 class Player {
@@ -30,34 +30,6 @@ class Player {
 }
 
 function visualiseWaveform(track, canvas) {
-}
-
-function draw(normalizedData, canvas) {
-  const padding = 0;
-  const ctx = canvas.getContext("2d");
-  ctx.translate(0, canvas.offsetHeight / 2 + padding);
-  const width = canvas.offsetWidth / normalizedData.length;
-  for (let i = 0; i < normalizedData.length; i++) {
-    const x = width * i;
-    let height = normalizedData[i] * canvas.offsetHeight - padding;
-    if (height < 0) {
-      height = 0;
-    } else if (height > canvas.offsetHeight / 2) {
-      height = height > canvas.offsetHeight / 2;
-    }
-    drawLineSegment(ctx, x, height, width, (i + 1) % 2);
-  }
-}
-
-function drawLineSegment(ctx, x, y, width, isEven) {
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = "#ddd";
-  ctx.beginPath();
-  y = isEven ? y : -y;
-  ctx.moveTo(x, 0);
-  ctx.lineTo(x, y);
-  ctx.lineTo(x + width, 0);
-  ctx.stroke();
 }
 
 // class Stem {
@@ -138,7 +110,9 @@ export default class {
 
   visualize(event, el) {
     if (event.target.dataset.key === el.dataset.key) {
-      el.innerHTML = "visualize";
+      const filteredData = filterData(this.stems[el.dataset.key].track);
+      const normalizedData = normalizeData(filteredData);
+      draw(normalizedData, el);
     }
   }
 
@@ -151,4 +125,53 @@ export default class {
       el.appendChild(loadTemplate("waveform", findReplace));
     }
   }
+}
+
+function filterData(audioBuffer) {
+  const rawData = audioBuffer.getChannelData(0);
+  const samples = 500;
+  const blockSize = Math.floor(rawData.length / samples);
+  const filteredData = [];
+  for (let i = 0; i < samples; i++) {
+    let blockStart = blockSize * i;
+    let sum = 0;
+    for (let j = 0; j < blockSize; j++) {
+      sum = sum + Math.abs(rawData[blockStart + j]);
+    }
+    filteredData.push(sum / blockSize);
+  }
+  return filteredData;
+}
+
+function normalizeData(filteredData) {
+  const multiplier = Math.pow(Math.max(...filteredData), -1);
+  return filteredData.map((n) => n * multiplier);
+}
+
+function draw(normalizedData, canvas) {
+  const padding = 0;
+  const ctx = canvas.getContext("2d");
+  ctx.translate(0, canvas.offsetHeight / 2 + padding);
+  const width = canvas.offsetWidth / normalizedData.length;
+  for (let i = 0; i < normalizedData.length; i++) {
+    const x = width * i;
+    let height = normalizedData[i] * canvas.offsetHeight - padding;
+    if (height < 0) {
+      height = 0;
+    } else if (height > canvas.offsetHeight / 2) {
+      height = height > canvas.offsetHeight / 2;
+    }
+    drawLineSegment(ctx, x, height, width, (i + 1) % 2);
+  }
+}
+
+function drawLineSegment(ctx, x, y, width, isEven) {
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "#ddd";
+  ctx.beginPath();
+  y = isEven ? y : -y;
+  ctx.moveTo(x, 0);
+  ctx.lineTo(x, y);
+  ctx.lineTo(x + width, 0);
+  ctx.stroke();
 }
