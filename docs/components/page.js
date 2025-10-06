@@ -1,14 +1,19 @@
 const names = {
   bass: { name: "Bass" },
-  bv: { name: "B.V." },
+  // bv: { name: "B.V." },
+  bv1: { name: "BV1" },
+  bv2: { name: "BV2" },
+  clyde: { name: "Clyde" },
+  drums: { name: "Drums" },
   gracie: { name: "Gracie" },
   guitar: { name: "Guitar" },
+  horns: { name: "Horns" },
   keys: { name: "Keys" },
-  piano: { name: "Piano" },
-  plucks: { name: "Plucks" },
-  pads: { name: "Pads" },
-  solo: { name: "Solo" },
-  swells: { name: "Swells" },
+  // pads: { name: "Pads" },
+  // piano: { name: "Piano" },
+  //solo: { name: "Solo" },
+  //swells: { name: "Swells" },
+  wurli: { name: "Wurli" },
 };
 
 const templates = {
@@ -43,10 +48,69 @@ export default class {
     );
   }
 
+  async init(_event, _el) {
+    for (let key of Object.keys(names)) {
+      let track = await this.getTrack(key);
+      await this.addStem(key, track);
+    }
+    this.api.forward(event, "showButton");
+  }
+
   addStem(key, track) {
     console.log(`Adding stem: ${key}`);
     this.stems[key] = {};
     this.stems[key].track = track;
+    this.api.forward({ target: { dataset: { key: key } } }, "visualize");
+  }
+
+  draw(normalizedData, canvas, time) {
+    const padding = 0;
+    const ctx = canvas.getContext("2d");
+    //ctx.translate(0, canvas.offsetHeight / 2 + padding);
+    const width = canvas.offsetWidth / normalizedData.length;
+    ctx.clearRect(0, 0, 440, 30);
+
+    if (this.isPlaying) {
+      const hardCodedSongLength = 186;
+      const pct = time / hardCodedSongLength;
+      const x2 = 440 * pct;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#a11";
+      ctx.beginPath();
+      ctx.moveTo(x2, 0);
+      ctx.lineTo(x2, 20);
+      ctx.stroke();
+    }
+
+    for (let i = 0; i < normalizedData.length; i++) {
+      const x = width * i;
+      let height = normalizedData[i] * canvas.offsetHeight - padding;
+      if (height < 0) {
+        height = 0;
+      } else if (height > canvas.offsetHeight / 2) {
+        height = height > canvas.offsetHeight / 2;
+      }
+      drawLineSegment(ctx, x, height, width, (i + 1) % 2);
+    }
+  }
+
+  fade(event, _el) {
+    const gain = parseFloat(event.target.value);
+    const key = event.target.dataset.key;
+    this.stems[key].gainNode.gain.value = gain;
+    console.log(event.target.value);
+  }
+
+  async getTrack(key) {
+    const url = `/stems/do/${key}.mp3`;
+    let response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("There was a problem getting the track");
+    } else {
+      const arrayBuffer = await response.arrayBuffer();
+      const track = await this.audioContext.decodeAudioData(arrayBuffer);
+      return track;
+    }
   }
 
   playStop(_event, el) {
@@ -59,6 +123,7 @@ export default class {
     } else {
       el.innerHTML = "Stop";
       this.isPlaying = true;
+      this.audioContext = new AudioContext();
       for (let key of Object.keys(names)) {
         this.stems[key].source = new AudioBufferSourceNode(this.audioContext, {
           buffer: this.stems[key].track,
@@ -69,36 +134,7 @@ export default class {
         );
         this.stems[key].source.start();
       }
-    }
-  }
-
-  fade(event, _el) {
-    const gain = parseFloat(event.target.value);
-    const key = event.target.dataset.key;
-    this.stems[key].gainNode.gain.value = gain;
-    console.log(event.target.value);
-  }
-
-  async init(_event, _el) {
-    for (let key of Object.keys(names)) {
-      console.log("h1");
-      let track = await this.getTrack(key);
-      await this.addStem(key, track);
-      console.log("h2");
-      this.api.forward({ target: { dataset: { key: key } } }, "visualize");
-    }
-    this.api.forward(event, "showButton");
-  }
-
-  async getTrack(key) {
-    const url = `/stems/${key}.mp3`;
-    let response = await fetch(url);
-    if (!response.ok) {
-      throw new Error("There was a problem getting the track");
-    } else {
-      const arrayBuffer = await response.arrayBuffer();
-      const track = await this.audioContext.decodeAudioData(arrayBuffer);
-      return track;
+      this.trackPlayhead();
     }
   }
 
@@ -106,11 +142,23 @@ export default class {
     el.hidden = false;
   }
 
+  trackPlayhead() {
+    for (let key of Object.keys(names)) {
+      this.api.forward({ target: { dataset: { key: key } } }, "visualize");
+    }
+
+    let _ = requestAnimationFrame(() => {
+      if (this.isPlaying) {
+        this.trackPlayhead();
+      }
+    });
+  }
+
   visualize(event, el) {
     if (event.target.dataset.key === el.dataset.key) {
       const filteredData = filterData(this.stems[el.dataset.key].track);
       const normalizedData = normalizeData(filteredData);
-      draw(normalizedData, el);
+      this.draw(normalizedData, el, this.audioContext.currentTime);
     }
   }
 
@@ -144,23 +192,6 @@ function filterData(audioBuffer) {
 function normalizeData(filteredData) {
   const multiplier = Math.pow(Math.max(...filteredData), -1);
   return filteredData.map((n) => n * multiplier);
-}
-
-function draw(normalizedData, canvas) {
-  const padding = 0;
-  const ctx = canvas.getContext("2d");
-  ctx.translate(0, canvas.offsetHeight / 2 + padding);
-  const width = canvas.offsetWidth / normalizedData.length;
-  for (let i = 0; i < normalizedData.length; i++) {
-    const x = width * i;
-    let height = normalizedData[i] * canvas.offsetHeight - padding;
-    if (height < 0) {
-      height = 0;
-    } else if (height > canvas.offsetHeight / 2) {
-      height = height > canvas.offsetHeight / 2;
-    }
-    drawLineSegment(ctx, x, height, width, (i + 1) % 2);
-  }
 }
 
 function drawLineSegment(ctx, x, y, width, isEven) {

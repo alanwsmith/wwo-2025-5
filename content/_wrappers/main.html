@@ -51,12 +51,28 @@ https://github.com/alanwsmith/wwo-2025-[@ day_num @]
     <link rel="manifest" href="/favicons/site.webmanifest" />
     <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5" />
 
+    <link rel="stylesheet" href="/styles/highlight-base16-ocean-light.css" />
+    <link rel="stylesheet" href="/styles/highlight-base16-ocean-dark.css" />
+
     [! include "_wrappers/custom-head-tags.html" !] 
 
     [!- include "_wrappers/base-styles.html" -!]
     [!- include "_wrappers/custom-styles.html" -!]
 
+
     <style>
+
+    h2 {
+      margin-top: var(--xlarge-margin);
+    }
+
+.code-block {
+  margin: var(--xlarge-margin);
+  padding: var(--xlarge-padding);
+  background-color: var(--match-faded);
+  border-radius: var(--default-radius);
+}
+
     [! include "_includes/styles.css" !]
     </style>
 
