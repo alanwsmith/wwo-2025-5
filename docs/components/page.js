@@ -139,7 +139,8 @@ export default class {
   }
 
   showButton(_event, el) {
-    el.hidden = false;
+    el.innerHTML = "Play";
+    el.dataset.send = "playStop";
   }
 
   trackPlayhead() {
