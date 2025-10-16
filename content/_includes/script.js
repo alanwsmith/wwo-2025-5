@@ -11,26 +11,14 @@ const names = {
   wurli: { name: "Wurli" },
 };
 
-const templates = {
-  waveform: `
-      <div class="waveform-wrapper">
-        <label><span class="labelName">name</span>
-        <input type="range" min="0" max="1" data-receive="reset"
-            data-key="dataKey" data-send="fade" value="1" step="0.01" />
-        </label>
-        <canvas width="440" height="30" data-receive="visualize" data-key="dataKey"></canvas>
-      </div>`,
-};
-
-// function loadTemplate(name, findReplace) {
-//   const template = document.createElement("template");
-//   let content = templates[name];
-//   for (let [k, v] of Object.entries(findReplace)) {
-//     content = content.replaceAll(k, v);
-//   }
-//   template.innerHTML = content;
-//   return template.content.cloneNode(true);
-// }
+const waveform = `
+<div class="waveform-wrapper">
+  <label><span class="labelName">name</span>
+  <input type="range" min="0" max="1" data-receive="reset"
+      data-key="dataKey" data-send="fade" value="1" step="0.01" />
+  </label>
+  <canvas width="440" height="30" data-receive="visualize" data-key="dataKey"></canvas>
+</div>`;
 
 window.Remixer = class {
   bittyInit() {
@@ -38,10 +26,6 @@ window.Remixer = class {
     this.audioContext = new AudioContext();
     this.stems = {};
     this.api.setProp("--load-hider", "visible");
-    // document.documentElement.style.setProperty(
-    //   "--page-visibility",
-    //   "visible",
-    // );
   }
 
   async init(_event, _el) {
@@ -62,7 +46,6 @@ window.Remixer = class {
   draw(normalizedData, canvas, time) {
     const padding = 0;
     const ctx = canvas.getContext("2d");
-    //ctx.translate(0, canvas.offsetHeight / 2 + padding);
     const width = canvas.offsetWidth / normalizedData.length;
     ctx.clearRect(0, 0, 440, 30);
 
@@ -170,7 +153,7 @@ window.Remixer = class {
         ["dataKey", key],
         ["name", names[key].name]
       ];
-      el.appendChild(this.api.useTemplate(templates["waveform"], subs));
+      el.appendChild(this.api.useTemplate(waveform, subs));
     }
   }
 }

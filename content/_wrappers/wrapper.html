@@ -87,7 +87,7 @@ https://github.com/alanwsmith/wwo-2025-[@ day_num @]
       }
 
       dayLinks(_event, el) {
-        el.appendChild(this.api.useTemplate(templates["dayStart"]));
+        el.appendChild(this.api.useTemplate(wwoTemplates["dayStart"]));
         for (let day = 1; day <= s.config.currentDay; day += 1) {
           const replacements = [
             ["DAY", day]

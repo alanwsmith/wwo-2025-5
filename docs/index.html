@@ -2214,7 +2214,7 @@ canvas {
       }
 
       dayLinks(_event, el) {
-        el.appendChild(this.api.useTemplate(templates["dayStart"]));
+        el.appendChild(this.api.useTemplate(wwoTemplates["dayStart"]));
         for (let day = 1; day <= s.config.currentDay; day += 1) {
           const replacements = [
             ["DAY", day]
@@ -2250,26 +2250,14 @@ const names = {
   wurli: { name: "Wurli" },
 };
 
-const templates = {
-  waveform: `
-      <div class="waveform-wrapper">
-        <label><span class="labelName">name</span>
-        <input type="range" min="0" max="1" data-receive="reset"
-            data-key="dataKey" data-send="fade" value="1" step="0.01" />
-        </label>
-        <canvas width="440" height="30" data-receive="visualize" data-key="dataKey"></canvas>
-      </div>`,
-};
-
-// function loadTemplate(name, findReplace) {
-//   const template = document.createElement("template");
-//   let content = templates[name];
-//   for (let [k, v] of Object.entries(findReplace)) {
-//     content = content.replaceAll(k, v);
-//   }
-//   template.innerHTML = content;
-//   return template.content.cloneNode(true);
-// }
+const waveform = `
+<div class="waveform-wrapper">
+  <label><span class="labelName">name</span>
+  <input type="range" min="0" max="1" data-receive="reset"
+      data-key="dataKey" data-send="fade" value="1" step="0.01" />
+  </label>
+  <canvas width="440" height="30" data-receive="visualize" data-key="dataKey"></canvas>
+</div>`;
 
 window.Remixer = class {
   bittyInit() {
@@ -2277,10 +2265,6 @@ window.Remixer = class {
     this.audioContext = new AudioContext();
     this.stems = {};
     this.api.setProp("--load-hider", "visible");
-    // document.documentElement.style.setProperty(
-    //   "--page-visibility",
-    //   "visible",
-    // );
   }
 
   async init(_event, _el) {
@@ -2301,7 +2285,6 @@ window.Remixer = class {
   draw(normalizedData, canvas, time) {
     const padding = 0;
     const ctx = canvas.getContext("2d");
-    //ctx.translate(0, canvas.offsetHeight / 2 + padding);
     const width = canvas.offsetWidth / normalizedData.length;
     ctx.clearRect(0, 0, 440, 30);
 
@@ -2409,7 +2392,7 @@ window.Remixer = class {
         ["dataKey", key],
         ["name", names[key].name]
       ];
-      el.appendChild(this.api.useTemplate(templates["waveform"], subs));
+      el.appendChild(this.api.useTemplate(waveform, subs));
     }
   }
 }
@@ -2468,6 +2451,8 @@ function drawLineSegment(ctx, x, y, width, isEven) {
         <div data-receive="dayLinks"></div>
       </header>
       <main class="default-width">
+<p>Take control of the faders and make your own mix of &quot;Do&quot; by <a href="https://lawrencetheband.com/">Lawrence</a></p>
+
 <div class="project-wrapper">
 <bitty-2-0 data-connect="Remixer" data-send="waveforms|init">
   <div data-receive="waveforms"></div>
@@ -2477,7 +2462,25 @@ function drawLineSegment(ctx, x, y, width, isEven) {
 </bitty-2-0></div>
 
 <h3>Details</h3>
-<p>TODO: Write the description</p>
+<p>This is Day 5 of <a href="https://weirdweboctober.website/">Weird Web Ocbober</a>.
+The theme is <em>Remix</em>.</p>
+<p>This experiment is based off
+<a href="https://splitter.fm/">splitter.fm</a>. Splitter lets you
+mute and solo the various stems of a track. That's great, but I want
+full fader control. So, I built this.</p>
+<p>I built an earlier prototype that lets you click around
+to different parts of the track and save your fader
+movements so you can replay them. The base code
+here is a big refinement for the basics player.
+I'll build the rest of the functionality when
+I bring the other one online.</p>
+<p>Here's the code for the page. It uses
+<a href="https://bitty.alanwsmith.com/">bitty</a>
+to wire up the interactions. It's not required
+for the audio functionality. That's all
+based off the
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API">Web Audio API</a>.</p>
+
 <h3>The HTML</h3>
 <pre class="code-block"><code><span class="line-marker"></span><span class="text html basic"><span class="meta tag custom html"><span class="punctuation definition tag begin html">&lt;</span><span class="entity name tag custom html">bitty-2-0</span> <span class="meta attribute-with-value html"><span class="entity other attribute-name html">data-connect</span><span class="punctuation separator key-value html">=</span></span><span class="meta attribute-with-value html"><span class="string quoted double html"><span class="punctuation definition string begin html">&quot;</span>Remixer<span class="punctuation definition string end html">&quot;</span></span></span> <span class="meta attribute-with-value html"><span class="entity other attribute-name html">data-send</span><span class="punctuation separator key-value html">=</span></span><span class="meta attribute-with-value html"><span class="string quoted double html"><span class="punctuation definition string begin html">&quot;</span>waveforms|init<span class="punctuation definition string end html">&quot;</span></span></span><span class="punctuation definition tag end html">&gt;</span></span>
 <span class="line-marker"></span>  <span class="meta tag block any html"><span class="punctuation definition tag begin html">&lt;</span><span class="entity name tag block any html">div</span> <span class="meta attribute-with-value html"><span class="entity other attribute-name html">data-receive</span><span class="punctuation separator key-value html">=</span></span><span class="meta attribute-with-value html"><span class="string quoted double html"><span class="punctuation definition string begin html">&quot;</span>waveforms<span class="punctuation definition string end html">&quot;</span></span></span><span class="punctuation definition tag end html">&gt;</span></span><span class="meta tag block any html"><span class="punctuation definition tag begin html">&lt;/</span><span class="entity name tag block any html">div</span><span class="punctuation definition tag end html">&gt;</span></span>
@@ -2517,38 +2520,22 @@ function drawLineSegment(ctx, x, y, width, isEven) {
 <span class="line-marker"></span>  <span class="meta object-literal key js">wurli</span><span class="punctuation separator key-value js">:</span> <span class="meta object-literal js"><span class="punctuation section block js">{</span> <span class="meta object-literal key js">name</span><span class="punctuation separator key-value js">:</span> <span class="string quoted double js"><span class="punctuation definition string begin js">&quot;</span>Wurli<span class="punctuation definition string end js">&quot;</span></span> <span class="punctuation section block js">}</span></span><span class="punctuation separator comma js">,</span>
 <span class="line-marker"></span><span class="punctuation section block js">}</span></span><span class="punctuation terminator statement js">;</span>
 <span class="line-marker"></span>
-<span class="line-marker"></span><span class="storage type js">const</span> <span class="variable other readwrite js">templates</span> <span class="keyword operator assignment js">=</span> <span class="meta object-literal js"><span class="punctuation section block js">{</span>
-<span class="line-marker"></span>  <span class="meta object-literal key js">waveform</span><span class="punctuation separator key-value js">:</span> <span class="string template js"><span class="punctuation definition string template begin js">`</span>
-<span class="line-marker"></span>      &lt;div class=&quot;waveform-wrapper&quot;&gt;
-<span class="line-marker"></span>        &lt;label&gt;&lt;span class=&quot;labelName&quot;&gt;name&lt;/span&gt;
-<span class="line-marker"></span>        &lt;input type=&quot;range&quot; min=&quot;0&quot; max=&quot;1&quot; data-receive=&quot;reset&quot;
-<span class="line-marker"></span>            data-key=&quot;dataKey&quot; data-send=&quot;fade&quot; value=&quot;1&quot; step=&quot;0.01&quot; /&gt;
-<span class="line-marker"></span>        &lt;/label&gt;
-<span class="line-marker"></span>        &lt;canvas width=&quot;440&quot; height=&quot;30&quot; data-receive=&quot;visualize&quot; data-key=&quot;dataKey&quot;&gt;&lt;/canvas&gt;
-<span class="line-marker"></span>      &lt;/div&gt;<span class="punctuation definition string template end js">`</span></span><span class="punctuation separator comma js">,</span>
-<span class="line-marker"></span><span class="punctuation section block js">}</span></span><span class="punctuation terminator statement js">;</span>
+<span class="line-marker"></span><span class="storage type js">const</span> <span class="variable other readwrite js">waveform</span> <span class="keyword operator assignment js">=</span> <span class="string template js"><span class="punctuation definition string template begin js">`</span>
+<span class="line-marker"></span>&lt;div class=&quot;waveform-wrapper&quot;&gt;
+<span class="line-marker"></span>  &lt;label&gt;&lt;span class=&quot;labelName&quot;&gt;name&lt;/span&gt;
+<span class="line-marker"></span>  &lt;input type=&quot;range&quot; min=&quot;0&quot; max=&quot;1&quot; data-receive=&quot;reset&quot;
+<span class="line-marker"></span>      data-key=&quot;dataKey&quot; data-send=&quot;fade&quot; value=&quot;1&quot; step=&quot;0.01&quot; /&gt;
+<span class="line-marker"></span>  &lt;/label&gt;
+<span class="line-marker"></span>  &lt;canvas width=&quot;440&quot; height=&quot;30&quot; data-receive=&quot;visualize&quot; data-key=&quot;dataKey&quot;&gt;&lt;/canvas&gt;
+<span class="line-marker"></span>&lt;/div&gt;<span class="punctuation definition string template end js">`</span></span><span class="punctuation terminator statement js">;</span>
 <span class="line-marker"></span>
-<span class="line-marker"></span><span class="comment line double-slash js"><span class="punctuation definition comment js">//</span> function loadTemplate(name, findReplace) {
-<span class="line-marker"></span></span><span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>   const template = document.createElement(&quot;template&quot;);
-<span class="line-marker"></span></span><span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>   let content = templates[name];
-<span class="line-marker"></span></span><span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>   for (let [k, v] of Object.entries(findReplace)) {
-<span class="line-marker"></span></span><span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>     content = content.replaceAll(k, v);
-<span class="line-marker"></span></span><span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>   }
-<span class="line-marker"></span></span><span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>   template.innerHTML = content;
-<span class="line-marker"></span></span><span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>   return template.content.cloneNode(true);
-<span class="line-marker"></span></span><span class="comment line double-slash js"><span class="punctuation definition comment js">//</span> }
-<span class="line-marker"></span></span>
 <span class="line-marker"></span><span class="support type object dom js">window</span><span class="punctuation accessor js">.</span><span class="meta property object js">Remixer</span> <span class="keyword operator assignment js">=</span> <span class="meta class js"><span class="storage type class js">class</span> <span class="meta class js"><span class="meta block js"><span class="punctuation section block js">{</span></span></span></span><span class="meta class js"><span class="meta block js">
 <span class="line-marker"></span>  <span class="meta function declaration js"><span class="entity name function js">bittyInit</span><span class="punctuation section group begin js">(</span><span class="punctuation section group end js">)</span><span class="meta function declaration js"> </span></span><span class="meta block js"><span class="punctuation section block js">{</span>
 <span class="line-marker"></span>    <span class="variable language this js">this</span><span class="punctuation accessor js">.</span><span class="meta property object js">isPlaying</span> <span class="keyword operator assignment js">=</span> <span class="constant language boolean false js">false</span><span class="punctuation terminator statement js">;</span>
 <span class="line-marker"></span>    <span class="variable language this js">this</span><span class="punctuation accessor js">.</span><span class="meta property object js">audioContext</span> <span class="keyword operator assignment js">=</span> <span class="meta instance constructor js"><span class="keyword operator word new js">new</span><span class="meta function-call constructor js"> <span class="variable type js">AudioContext</span><span class="meta group js"><span class="punctuation section group js">(</span></span><span class="meta group js"><span class="punctuation section group js">)</span></span></span></span><span class="punctuation terminator statement js">;</span>
 <span class="line-marker"></span>    <span class="variable language this js">this</span><span class="punctuation accessor js">.</span><span class="meta property object js">stems</span> <span class="keyword operator assignment js">=</span> <span class="meta object-literal js"><span class="punctuation section block js">{</span><span class="punctuation section block js">}</span></span><span class="punctuation terminator statement js">;</span>
 <span class="line-marker"></span>    <span class="variable language this js">this</span><span class="punctuation accessor js">.</span><span class="meta property object js">api</span><span class="punctuation accessor js">.</span><span class="meta function-call method js"><span class="variable function js">setProp</span><span class="meta group js"><span class="punctuation section group js">(</span><span class="string quoted double js"><span class="punctuation definition string begin js">&quot;</span>--load-hider<span class="punctuation definition string end js">&quot;</span></span><span class="punctuation separator comma js">,</span> <span class="string quoted double js"><span class="punctuation definition string begin js">&quot;</span>visible<span class="punctuation definition string end js">&quot;</span></span></span><span class="meta group js"><span class="punctuation section group js">)</span></span></span><span class="punctuation terminator statement js">;</span>
-<span class="line-marker"></span>    <span class="comment line double-slash js"><span class="punctuation definition comment js">//</span> document.documentElement.style.setProperty(
-<span class="line-marker"></span></span>    <span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>   &quot;--page-visibility&quot;,
-<span class="line-marker"></span></span>    <span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>   &quot;visible&quot;,
-<span class="line-marker"></span></span>    <span class="comment line double-slash js"><span class="punctuation definition comment js">//</span> );
-<span class="line-marker"></span></span>  <span class="punctuation section block js">}</span></span>
+<span class="line-marker"></span>  <span class="punctuation section block js">}</span></span>
 <span class="line-marker"></span>
 <span class="line-marker"></span>  <span class="meta function declaration js"><span class="entity name function js">async</span><span class="meta function declaration js"> </span></span><span class="meta function declaration js"><span class="entity name function js">init</span><span class="punctuation section group begin js">(</span><span class="variable parameter function js">_event</span><span class="punctuation separator parameter function js">,</span> <span class="variable parameter function js">_el</span><span class="punctuation section group end js">)</span><span class="meta function declaration js"> </span></span><span class="meta block js"><span class="punctuation section block js">{</span>
 <span class="line-marker"></span>    <span class="meta for js"><span class="keyword control loop js">for</span> <span class="meta group js"><span class="punctuation section group js">(</span><span class="storage type js">let</span> <span class="variable other readwrite js">key</span> <span class="keyword operator js">of</span> <span class="support class builtin js">Object</span><span class="punctuation accessor js">.</span><span class="meta function-call method js"><span class="variable function js">keys</span><span class="meta group js"><span class="punctuation section group js">(</span><span class="variable other readwrite js">names</span></span><span class="meta group js"><span class="punctuation section group js">)</span></span></span><span class="punctuation section group js">)</span></span> <span class="meta block js"><span class="punctuation section block js">{</span>
@@ -2568,8 +2555,7 @@ function drawLineSegment(ctx, x, y, width, isEven) {
 <span class="line-marker"></span>  <span class="meta function declaration js"><span class="entity name function js">draw</span><span class="punctuation section group begin js">(</span><span class="variable parameter function js">normalizedData</span><span class="punctuation separator parameter function js">,</span> <span class="variable parameter function js">canvas</span><span class="punctuation separator parameter function js">,</span> <span class="variable parameter function js">time</span><span class="punctuation section group end js">)</span><span class="meta function declaration js"> </span></span><span class="meta block js"><span class="punctuation section block js">{</span>
 <span class="line-marker"></span>    <span class="storage type js">const</span> <span class="variable other readwrite js">padding</span> <span class="keyword operator assignment js">=</span> <span class="constant numeric js">0</span><span class="punctuation terminator statement js">;</span>
 <span class="line-marker"></span>    <span class="storage type js">const</span> <span class="variable other readwrite js">ctx</span> <span class="keyword operator assignment js">=</span> <span class="variable other object js">canvas</span><span class="punctuation accessor js">.</span><span class="meta function-call method js"><span class="variable function js">getContext</span><span class="meta group js"><span class="punctuation section group js">(</span><span class="string quoted double js"><span class="punctuation definition string begin js">&quot;</span>2d<span class="punctuation definition string end js">&quot;</span></span></span><span class="meta group js"><span class="punctuation section group js">)</span></span></span><span class="punctuation terminator statement js">;</span>
-<span class="line-marker"></span>    <span class="comment line double-slash js"><span class="punctuation definition comment js">//</span>ctx.translate(0, canvas.offsetHeight / 2 + padding);
-<span class="line-marker"></span></span>    <span class="storage type js">const</span> <span class="variable other readwrite js">width</span> <span class="keyword operator assignment js">=</span> <span class="variable other object js">canvas</span><span class="punctuation accessor js">.</span><span class="meta property object js">offsetWidth</span> <span class="keyword operator arithmetic js">/</span> <span class="variable other object js">normalizedData</span><span class="punctuation accessor js">.</span><span class="meta property object js">length</span><span class="punctuation terminator statement js">;</span>
+<span class="line-marker"></span>    <span class="storage type js">const</span> <span class="variable other readwrite js">width</span> <span class="keyword operator assignment js">=</span> <span class="variable other object js">canvas</span><span class="punctuation accessor js">.</span><span class="meta property object js">offsetWidth</span> <span class="keyword operator arithmetic js">/</span> <span class="variable other object js">normalizedData</span><span class="punctuation accessor js">.</span><span class="meta property object js">length</span><span class="punctuation terminator statement js">;</span>
 <span class="line-marker"></span>    <span class="variable other object js">ctx</span><span class="punctuation accessor js">.</span><span class="meta function-call method js"><span class="variable function js">clearRect</span><span class="meta group js"><span class="punctuation section group js">(</span><span class="constant numeric js">0</span><span class="punctuation separator comma js">,</span> <span class="constant numeric js">0</span><span class="punctuation separator comma js">,</span> <span class="constant numeric js">440</span><span class="punctuation separator comma js">,</span> <span class="constant numeric js">30</span></span><span class="meta group js"><span class="punctuation section group js">)</span></span></span><span class="punctuation terminator statement js">;</span>
 <span class="line-marker"></span>
 <span class="line-marker"></span>    <span class="meta conditional js"><span class="keyword control conditional js">if</span> <span class="meta group js"><span class="punctuation section group js">(</span><span class="variable language this js">this</span><span class="punctuation accessor js">.</span><span class="meta property object js">isPlaying</span><span class="punctuation section group js">)</span></span> <span class="meta block js"><span class="punctuation section block js">{</span>
@@ -2676,7 +2662,7 @@ function drawLineSegment(ctx, x, y, width, isEven) {
 <span class="line-marker"></span>        <span class="meta sequence js"><span class="punctuation section brackets js">[</span><span class="string quoted double js"><span class="punctuation definition string begin js">&quot;</span>dataKey<span class="punctuation definition string end js">&quot;</span></span><span class="punctuation separator comma js">,</span> <span class="variable other readwrite js">key</span><span class="punctuation section brackets js">]</span></span><span class="punctuation separator comma js">,</span>
 <span class="line-marker"></span>        <span class="meta sequence js"><span class="punctuation section brackets js">[</span><span class="string quoted double js"><span class="punctuation definition string begin js">&quot;</span>name<span class="punctuation definition string end js">&quot;</span></span><span class="punctuation separator comma js">,</span> <span class="variable other object js">names</span><span class="meta brackets js"><span class="punctuation section brackets js">[</span><span class="variable other readwrite js">key</span><span class="punctuation section brackets js">]</span></span><span class="punctuation accessor js">.</span><span class="meta property object js">name</span><span class="punctuation section brackets js">]</span></span>
 <span class="line-marker"></span>      <span class="punctuation section brackets js">]</span></span><span class="punctuation terminator statement js">;</span>
-<span class="line-marker"></span>      <span class="variable other object js">el</span><span class="punctuation accessor js">.</span><span class="meta function-call method js"><span class="support function dom js">appendChild</span><span class="meta group js"><span class="punctuation section group js">(</span><span class="variable language this js">this</span><span class="punctuation accessor js">.</span><span class="meta property object js">api</span><span class="punctuation accessor js">.</span><span class="meta function-call method js"><span class="variable function js">useTemplate</span><span class="meta group js"><span class="punctuation section group js">(</span><span class="variable other object js">templates</span><span class="meta brackets js"><span class="punctuation section brackets js">[</span><span class="string quoted double js"><span class="punctuation definition string begin js">&quot;</span>waveform<span class="punctuation definition string end js">&quot;</span></span><span class="punctuation section brackets js">]</span></span><span class="punctuation separator comma js">,</span> <span class="variable other readwrite js">subs</span></span><span class="meta group js"><span class="punctuation section group js">)</span></span></span></span><span class="meta group js"><span class="punctuation section group js">)</span></span></span><span class="punctuation terminator statement js">;</span>
+<span class="line-marker"></span>      <span class="variable other object js">el</span><span class="punctuation accessor js">.</span><span class="meta function-call method js"><span class="support function dom js">appendChild</span><span class="meta group js"><span class="punctuation section group js">(</span><span class="variable language this js">this</span><span class="punctuation accessor js">.</span><span class="meta property object js">api</span><span class="punctuation accessor js">.</span><span class="meta function-call method js"><span class="variable function js">useTemplate</span><span class="meta group js"><span class="punctuation section group js">(</span><span class="variable other readwrite js">waveform</span><span class="punctuation separator comma js">,</span> <span class="variable other readwrite js">subs</span></span><span class="meta group js"><span class="punctuation section group js">)</span></span></span></span><span class="meta group js"><span class="punctuation section group js">)</span></span></span><span class="punctuation terminator statement js">;</span>
 <span class="line-marker"></span>    </span><span class="meta block js"><span class="punctuation section block js">}</span></span></span>
 <span class="line-marker"></span>  <span class="punctuation section block js">}</span></span>
 <span class="line-marker"></span><span class="punctuation section block js">}</span></span></span>
