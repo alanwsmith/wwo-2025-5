@@ -1,0 +1,157 @@
+[!- set themes = [
+    "Overview", "Transparency", "Maps", "Scramble", "Filters", "Remix", "Solids", "Sub-optimal", "Containers", "Blink", "Warning", "Camera", "Battle", "Upside-down", "Doubles", "Unicode", "Transition", "Illumination", "Trading", "Bounce", "Hidden  ", "Language", "Memory", "Style", "Counter", "Empty", "Texture", "Spell", "Tables", "Surprise", "Deprecated", "Spooky"
+] -!]
+
+[!- set day_num = 5 -!]
+
+[!- set theme = themes[day_num] -!]
+
+[!- set page_title -!]
+[@ theme @] - Weird Web October 2025 - Day [@ day_num @]
+[!- endset -!]
+
+[!- set description -!]
+One site a day for every day in October. Each one with a different theme. Today's is [@ theme @].
+[!- endset -!]
+
+[!- set og_image -!]
+https://res.cloudinary.com/awsimages/image/upload/c_fit,co_rgb:ffffff,l_text:Aldrich_42_bold:[@ day_num @] - [@ theme @]/fl_layer_apply,g_north_west,x_230,y_488/wwo-2025-base-og-image_tumugk.png
+[!- endset -!]
+
+[!- set favicon_root = "/favicons" -!]
+
+[!- set domain_without_trailing_slash -!]
+wwo-2025-[@ day_num @].alanwsmith.com
+[!- endset -!]
+
+[!- set og_url -!]
+https://[@ domain_without_trailing_slash @]/
+[!- endset -!]
+
+[!- set github_url -!]
+https://github.com/alanwsmith/wwo-2025-[@ day_num @]
+[!- endset -!]
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>[@ page_title @]</title>
+    <meta property="og:title" content="[@ page_title @]" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta name="description" content="[@ the_description @]" />
+    <meta property="og:description" content="[@ the_description @]" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="[@ og_url @]" />
+    <meta property="og:image" content="[@ og_image @]" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
+    <link rel="manifest" href="/favicons/site.webmanifest" />
+    <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5" />
+
+    <style>
+    :root {
+      --load-hider: hidden;
+    }
+    .load-hider {
+      visibility: var(--load-hider);
+    }
+    </style>
+
+    <style>
+    [! include "_includes/base-styles.css" !]
+    </style>
+
+    <style>
+    [! include "_includes/styles.css" !]
+    </style>
+
+    <script>
+    class State{}
+    const s = new State();
+
+    const wwoTemplates = {
+      "dayStart": `Day: `,
+      "dayLink": `<a class="dayLink" href="https://wwo-2025-DAY.alanwsmith.com/">DAY</a>`,
+      "dayText": `<span class="dayLink">DAY</span>`,
+    };
+
+    window.BittyClass = class {
+      async bittyInit() {
+        s.config = await this.api.fetchJSON("https://wwo-2025-0.alanwsmith.com/config.json");
+      }
+
+      dayLinks(_event, el) {
+        el.appendChild(this.api.useTemplate(wwoTemplates["dayStart"]));
+        for (let day = 1; day <= s.config.currentDay; day += 1) {
+          const replacements = [
+            ["DAY", day]
+          ];
+          if (day !== [@ day_num @]) {
+            el.appendChild(this.api.useTemplate(
+              wwoTemplates["dayLink"], replacements
+            ));
+          } else {
+            el.appendChild(this.api.useTemplate(
+              wwoTemplates["dayText"], replacements
+            ));
+          }
+        }
+      }
+      showContent(_event, _el) {
+         document.documentElement.style.setProperty("--load-hider", "visible");
+      }
+    }
+    </script>
+
+    <script>
+[! include "_includes/script.js" !]
+    </script>
+
+  </head>
+
+  <body>
+    <bitty-2-0 class="load-hider page-wrapper" data-send="dayLinks|showContent">
+      <noscript>
+        <p>
+          This page uses JavaScript. It's either off or unavailable. 
+          Content may not work properly. 
+        </p>
+        <style>
+          :root { --load-hider: visible; }
+        </style>
+      </noscript>
+      <header class="default-wrapper xlarge-bottom-margin">
+        <h1>[@ theme @]</h1>
+        <div class="small-font accent-bottom-border"><a href="https://wwo-2025-0.alanwsmith.com/">Weird Web October 2025</a>
+          | 
+          <a href="https://wwo-2025-0.alanwsmith.com/">Overview</a>
+        </div>
+        <div data-receive="dayLinks"></div>
+      </header>
+      <main class="default-width">
+    [! block main !][! endblock !]
+      </main>
+
+      <footer>
+        <div class="small-font">
+          <div>
+            from <a href="https://www.alanwsmith.com/">alan w smith</a>
+          </div>
+          <a href="https://wwo-2025-0.alanwsmith.com/">overview</a> ~
+          <a href="[@ github_url @]">source</a> ~
+          <a href="https://socials.alanwsmith.com/">socials</a> ~
+          <a href="https://links.alanwsmith.com/">other projects</a>
+        </div>
+      </footer>
+    </bitty-2-0>
+
+    <script src="/components/bitty-2.0.0-rc1.full.js" type="module"></script>
+  </body>
+</html>
+

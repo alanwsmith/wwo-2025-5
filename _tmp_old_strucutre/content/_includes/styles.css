@@ -8,9 +8,9 @@ canvas {
 }
 
 .waveform-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
   font-size: var(--small-font);
+  border-top: 1px solid var(--warning);
   margin-bottom: var(--xlarge-margin);
+  width: 440px;
 }
 

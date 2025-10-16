@@ -1,38 +1,24 @@
-[! extends "_wrappers/main.html" !]
+[! extends "_wrappers/wrapper.html" !]
 
 [! block main !]
+<p>Take control of the faders and make your own mix of &quot;Do&quot; by <a href="https://lawrencetheband.com/">Lawrence</a></p>
 
-<details class="default-flow">
-  <summary>The Code</summary>
-  <p>
-    This is the code that makes the page happen. 
-    The project is itself a remix of <a href="https://splitter.fm/">splitter.fm</a>
-    which is an awesome little tool for doing your own mixes
-    of songs from a bunch of bands. It only lets you 
-    mute and solo tracks though. I wanted to see
-    what it was like with full faders. 
-  </p>
-
-  <p>You can't click around to different parts
-    of the song in this version. I'll
-    add that in in the next version</p>
-
-
-  <h2>The HTML</h2>
-  <pre class="code-block"><code>[@ highlight_file("_includes/main.html")|safe @]</code></pre>
-
-  <h2>The CSS</h2>
-  <pre class="code-block"><code>[@ highlight_file("_includes/styles.css")|safe @]</code></pre>
-
-  <h2>The JavaScript</h2>
-  <pre class="code-block"><code>[@ highlight_file("components/page.js")|safe @]</code></pre>
-
-</details>
-
-<details open>
-  <summary>The Remixer - Do by Lawrence</summary>
+<div class="project-wrapper">
 [! include "_includes/main.html" !]
-</details>
+</div>
+
+<h3>Details</h3>
+[! include "_includes/description.html" !]
+
+<h3>The HTML</h3>
+<pre class="code-block"><code>[@- highlight_file("_includes/main.html")|safe -@]</code></pre>
+
+<h3>The CSS</h3>
+<pre class="code-block"><code>[@- highlight_file("_includes/styles.css")|safe -@]</code></pre>
+
+<h3>The JavaScript</h3>
+<pre class="code-block"><code>[@- highlight_file("_includes/script.js")|safe -@]</code></pre>
+
 [! endblock !]
 
 
